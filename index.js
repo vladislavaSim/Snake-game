@@ -7,6 +7,8 @@ document.querySelector('.container').appendChild($score)
 
 const snakeClassName = 'black';
 const cherryClassName = 'green';
+const killedSnakeClassName = 'red'
+const superCherryClassName = 'yellow'
 
 let field = [];
 
@@ -58,30 +60,18 @@ let direction = {
 
 let body = [
     new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
-    new Point(0,0),
+
 
 ];
 
 let cherry = new Point(5,5);
+let superCherry = new Point(19, 19)
 
 function drawPoint(field, point, className) {
-    field[point.y][point.x].classList.add(className);
+    if(!field[point.y][point.x].classList.contains(snakeClassName)) {
+        field[point.y][point.x].classList.add(className);
+    }
+
 }
 
 function clearField(...classNames){
@@ -134,45 +124,52 @@ let interval = setInterval(function () {
 
     body.unshift(newHead);
 
-    function checkGameover() { //to make game over if snake hits her own body + to add super cherry every 5 eats which longers snake up to two points
+    function checkGameover() {
         for(let i = 1; i < body.length; i++) {
             if(newHead.isEqual(body[i])) {
-                console.log('+++')
+                drawPoint(field, body[0], killedSnakeClassName)
                 clearField(snakeClassName, cherryClassName)
                 clearInterval(interval)
-                $score.innerHTML = 'GAME OVER'
+                $score.innerHTML = `GAME OVER. Your score is ${score}`
             }
         }
     }
 
     checkGameover()
-    console.log()
-    if(newHead.isEqual(cherry)){
-        clearField(cherryClassName);
+
+    if(newHead.isEqual(cherry) || newHead.isEqual(superCherry)){
+        clearField(cherryClassName, superCherryClassName);
         score++
         $score.innerHTML = String(score)
         document.querySelector('.container').appendChild($score)
         cherry = pointGenerator();
         drawPoint(field,cherry, cherryClassName);
-    }else{
+        if(score % 5 === 0) {
+            superCherry = pointGenerator()
+            drawPoint(field, superCherry, superCherryClassName)
+            if(newHead.isEqual(superCherry)) {
+                $score.innerHTML = String(score)
+                document.querySelector('.container').appendChild($score)
+                clearField(superCherryClassName)
+                drawSnake(field,body);
+            }
+        score += 2
+        }
+    } else{
         body.pop();
     }
+
     drawSnake(field,body);
-}, 100);
+}, 150);
 
 document.addEventListener('keydown', function (e) {
-    switch (e.code) {
-        case 'ArrowUp':
+        if (e.code === 'ArrowUp' && direction.y !== 1) {
             direction = {x: 0, y: -1};
-            break;
-        case 'ArrowDown':
+        } else if (e.code === 'ArrowDown' && direction.y !== -1) {
             direction = {x: 0, y: 1};
-            break;
-        case 'ArrowLeft':
+        } else if (e.code === 'ArrowLeft' && direction.x !== 1) {
             direction = {x: -1, y: 0};
-            break;
-        case 'ArrowRight':
+        } else if (e.code === 'ArrowRight' && direction.x !== -1) {
             direction = {x: 1, y: 0};
-            break;
-    }
+        }
 });

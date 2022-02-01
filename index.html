@@ -9,13 +9,34 @@
     <style>
         .black{
             background-color: black;
+            border-radius: 7px;
         }
         .green{
             background-color: green;
+            border-radius: 50%;
+        }
+        .red {
+            background-color: red;
+            border-radius: 50%;
+        }
+
+        .yellow {
+            background-color: yellow;
         }
         .row{
             display: flex;
         }
+        .darkred {
+            background-color: darkred;
+        }
+        .darkred::before {
+            content: 'X';
+            font-size: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .col{
             border: 1px solid #cccccc;
             width: 25px;
